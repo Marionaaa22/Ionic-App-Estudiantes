@@ -6,7 +6,7 @@ import { initializeApp } from "firebase/app";
 export const environment = {
   production: false,
 
-  firebaseConfig: {
+  firebase: {
     apiKey: "AIzaSyCQw9oFZKcUqOSXYCc87faf6s6zJXgyYjE",
     authDomain: "app-estudiantes-92df2.firebaseapp.com",
     projectId: "app-estudiantes-92df2",

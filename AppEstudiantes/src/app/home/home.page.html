@@ -7,20 +7,24 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-card>
-  <ion-card-header>
-    <ion-card-title>Card Title</ion-card-title>
-    <ion-card-subtitle>Card Subtitle</ion-card-subtitle>
-  </ion-card-header>
+  <ng-container *ngIf="(estudiantes$ | async) as estudiantes">
+    <ion-card *ngFor="let est of estudiantes">
+      <ion-card-header>
+        <ion-card-title>{{ est.nombre }}</ion-card-title>
+        <ion-card-subtitle>{{ est.curso }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        Edad: {{ est.edad }} años
+      </ion-card-content>
+    </ion-card>
+    <div *ngIf="estudiantes.length === 0">
+      No hay estudiantes registrados.
+    </div>
+  </ng-container>
 
-  <ion-card-content>
-    Here's a small text description for the card content. Nothing more, nothing less.
-  </ion-card-content>
-</ion-card>
-
-<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button>
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button>
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

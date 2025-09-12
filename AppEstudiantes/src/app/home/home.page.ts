@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonCardContent, IonFab, IonFabButton,
-  ToastController,IonModal,IonButtons,
+  ToastController, IonModal, IonButtons,
   IonLabel,
-  IonItem
+  IonItem,
+  IonInput
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import { Firestore, collection, addDoc, query, getDocs, collectionData, } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -19,32 +20,32 @@ import { Observable, of } from 'rxjs';
   standalone: true,
   styleUrls: ['home.page.scss'],
   imports: [CommonModule, IonHeader, IonButtons, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle,
-    IonCardSubtitle, IonCardContent, IonFab, IonFabButton, IonModal, FormsModule, IonLabel, IonItem],
+    IonCardSubtitle, IonCardContent, IonFab, IonFabButton, IonModal, IonInput, FormsModule, IonLabel, IonItem],
 })
 export class HomePage {
 
   mostrarModal: boolean = false;
   estudiantes$: Observable<any[]> | undefined;
   inputNombre: string = '';
-  inputApellido: string = '';
+  inputApellidos: string = '';
   inputClase: string = '';
 
   constructor(private firestore: Firestore, private toastController: ToastController) { }
 
   ngOnInit() {
     addIcons({
-      add
+      'add': add
     });
     const estudiantesCollection = collection(this.firestore, 'Estudiantes');
     this.estudiantes$ = collectionData(estudiantesCollection, { idField: 'id' }) as Observable<any[]>;
   }
 
-  abrirModal() {
-    this.mostrarModal = true;
-    this.inputNombre = '';
-    this.inputApellido = '';
-    this.inputClase = '';
-  }
+async abrirModal() {
+  this.mostrarModal = true;
+  this.inputNombre = '';
+  this.inputApellidos = '';
+  this.inputClase = '';
+}
 
   cerrarModal() {
     this.mostrarModal = false;
@@ -60,31 +61,31 @@ export class HomePage {
 
   async agregarEstudiante() {
 
-    const nombre = this.inputNombre.trim();
-    const apellido = this.inputApellido.trim();
-    const clase = this.inputClase.trim();
+    const Nombre = this.inputNombre.trim();
+    const Apellidos = this.inputApellidos.trim();
+    const Clase = this.inputClase.trim();
 
-    if (!nombre || !apellido || !clase) {
+    if (!Nombre || !Apellidos || !Clase) {
       this.showToast('Por favor, complete todos los campos.');
       return;
     }
 
     try {
       const estudiantesCollection = collection(this.firestore, 'Estudiantes');
-
-      await addDoc(estudiantesCollection,
-        {
-          nombre,
-          apellido,
-          clase
-        }
+      const docRef = await addDoc(estudiantesCollection, {
+        Nombre,
+        Apellidos,
+        Clase
+      });
+      await import('@angular/fire/firestore').then(firestoreModule =>
+        firestoreModule.updateDoc(docRef, { id: docRef.id })
       );
 
       this.showToast('Estudiante agregado exitosamente.');
       this.cerrarModal();
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Error al agregar estudiante: ', error);
+      console.log(Nombre, Apellidos, Clase);
       this.showToast('Error al agregar estudiante. Intente nuevamente.');
       return;
     }
@@ -95,9 +96,9 @@ export class HomePage {
     const estudiantesCollection = collection(this.firestore, 'Estudiantes');
     const q = query(estudiantesCollection);
     const querySnapshot = await getDocs(q);
-    const estudiantes = querySnapshot.docs.map(doc => doc.data());
+    const estudiante = querySnapshot.docs.map(doc => doc.data());
 
-    this.estudiantes$ = of(estudiantes);
+    this.estudiantes$ = of(estudiante);
 
   }
 

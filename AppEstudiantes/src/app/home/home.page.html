@@ -7,24 +7,49 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ng-container *ngIf="(estudiantes$ | async) as estudiantes">
-    <ion-card *ngFor="let est of estudiantes">
-      <ion-card-header>
-        <ion-card-title>{{ est.nombre }}</ion-card-title>
-        <ion-card-subtitle>{{ est.curso }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        Edad: {{ est.edad }} años
-      </ion-card-content>
-    </ion-card>
-    <div *ngIf="estudiantes.length === 0">
-      No hay estudiantes registrados.
-    </div>
-  </ng-container>
-
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button>
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button (click)="abrirModal()">
+      <ion-icon class="costum-item" name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
+
+  <ion-modal [isOpen]="mostrarModal" (didDismiss)="cerrarModal()">
+    <ng-template>
+
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nuevo Estudiante</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">Cerrar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <ion-item class="costum-item">
+          <ion-label position="floating">Nombre</ion-label>
+          <ion-input [(ngModel)]="inputNombre" type="text"></ion-input>
+        </ion-item>
+
+        <ion-item class="costum-item">
+          <ion-label position="floating">Apellido</ion-label>
+          <ion-input [(ngModel)]="inputApellido" type="text"></ion-input>
+        </ion-item>
+
+        <ion-item class="costum-item">
+          <ion-label position="floating">Clase</ion-label>
+          <ion-input [(ngModel)]="inputClase" type="text"></ion-input>
+        </ion-item>
+
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-card *ngFor="let estudiante of estudiantes$ | async">
+    <ion-card-content>
+     <ion-card-title>{{ estudiante.nombre }} {{ estudiante.apellido }}</ion-card-title>
+      <ion-card-subtitle>Apellido: {{ estudiante.apellido }}</ion-card-subtitle>
+      <ion-card-subtitle>Clase: {{ estudiante.clase }}</ion-card-subtitle>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

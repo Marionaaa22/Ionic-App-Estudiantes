@@ -19,13 +19,9 @@ import { Observable } from 'rxjs';
 })
 export class HomePage {
 
-  estudiantes$: Observable<any[]>;
   constructor(private firestore: Firestore) {
     addIcons({ add });
-    
-    const getEstudiantes = collection(this.firestore, 'Estudiantes');
 
-    this.estudiantes$ = collectionData(getEstudiantes, { idField: 'id' });
   }
 }
 

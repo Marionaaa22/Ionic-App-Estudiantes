@@ -37,7 +37,10 @@
           <ion-input [(ngModel)]="inputClase" name="clase" type="text"></ion-input>
         </ion-item>
 
-        <ion-button expand="block" (click)="agregarEstudiante()">Guardar</ion-button>
+        <ion-button expand="block" (click)="guardar()">
+          {{ editandoId ? 'Guardar Cambios' : 'Guardar' }}
+        </ion-button>
+
       </ion-content>
     </ng-template>
   </ion-modal>
@@ -52,7 +55,7 @@
         <ion-button color="danger" (click)="eliminarEstudiante(estudiante.id)">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
-        <ion-button color="secondary">
+        <ion-button color="secondary" (click)="editarEstudiante(estudiante)">
           <ion-icon name="create"></ion-icon>
         </ion-button>
       </div>

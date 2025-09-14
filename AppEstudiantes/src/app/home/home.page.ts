@@ -10,7 +10,7 @@ import {
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add, create, trash } from 'ionicons/icons';
-import { Firestore, collection, addDoc, query, getDocs, collectionData, doc, deleteDoc, } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, query, getDocs, collectionData, doc, deleteDoc, updateDoc, } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
@@ -19,16 +19,18 @@ import { FormsModule } from '@angular/forms';
   templateUrl: 'home.page.html',
   standalone: true,
   styleUrls: ['home.page.scss'],
-  imports: [CommonModule, IonHeader, IonButtons, IonButton,IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle,
+  imports: [CommonModule, IonHeader, IonButtons, IonButton, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle,
     IonCardSubtitle, IonCardContent, IonFab, IonFabButton, IonModal, IonInput, FormsModule, IonLabel, IonItem],
 })
 export class HomePage {
 
   mostrarModal: boolean = false;
+  editarModal: boolean = false;
   estudiantes$: Observable<any[]> | undefined;
   inputNombre: string = '';
   inputApellidos: string = '';
   inputClase: string = '';
+  editandoId: string | null = null;
 
   constructor(
     private firestore: Firestore,
@@ -46,15 +48,17 @@ export class HomePage {
     this.estudiantes$ = collectionData(estudiantesCollection, { idField: 'id' }) as Observable<any[]>;
   }
 
-async abrirModal() {
-  this.mostrarModal = true;
-  this.inputNombre = '';
-  this.inputApellidos = '';
-  this.inputClase = '';
-}
+  async abrirModal() {
+    this.mostrarModal = true;
+    this.editandoId = null; // Aseguramos que no hay edición
+    this.inputNombre = '';
+    this.inputApellidos = '';
+    this.inputClase = '';
+  }
 
   cerrarModal() {
     this.mostrarModal = false;
+    this.editarModal = false;
   }
 
   showToast(message: string) {
@@ -134,5 +138,41 @@ async abrirModal() {
       ]
     });
     await alert.present();
+  }
+
+  async editarEstudiante(estudiante: any) {
+    this.mostrarModal = true;
+    this.editandoId = estudiante.id;
+
+    this.inputNombre = estudiante.Nombre;
+    this.inputApellidos = estudiante.Apellidos;
+    this.inputClase = estudiante.Clase;
+  }
+
+  async guardar() {
+    const Nombre = this.inputNombre.trim();
+    const Apellidos = this.inputApellidos.trim();
+    const Clase = this.inputClase.trim();
+
+    if (!Nombre || !Apellidos || !Clase) {
+      this.showToast('Por favor, complete todos los campos.');
+      return;
+    }
+
+    try {
+      if (this.editandoId) {
+        const estudianteDoc = doc(this.firestore, 'Estudiantes', this.editandoId);
+        await updateDoc(estudianteDoc, { Nombre, Apellidos, Clase });
+        this.showToast('Estudiante actualizado exitosamente.');
+      } else {
+        await this.agregarEstudiante();
+      }
+
+      this.cerrarModal();
+      this.editandoId = null;
+    } catch (error) {
+      console.error('Error en guardar:', error);
+      this.showToast('Error al guardar. Intente nuevamente.');
+    }
   }
 }

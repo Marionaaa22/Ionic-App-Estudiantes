@@ -48,6 +48,14 @@
       <ion-card-title>Nombre: {{ estudiante.Nombre }}</ion-card-title>
       <ion-card-subtitle>Apellido: {{ estudiante.Apellidos }}</ion-card-subtitle>
       <ion-card-subtitle>Clase: {{ estudiante.Clase }}</ion-card-subtitle>
+      <div>
+        <ion-button color="danger" (click)="eliminarEstudiante(estudiante.id)">
+          <ion-icon name="trash"></ion-icon>
+        </ion-button>
+        <ion-button color="secondary">
+          <ion-icon name="create"></ion-icon>
+        </ion-button>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>

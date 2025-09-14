@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle,
   IonCardContent, IonFab, IonFabButton,
-  ToastController, IonModal, IonButtons,
+  ToastController, IonModal, IonButtons, AlertController,
   IonLabel,
   IonItem,
   IonInput
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
-import { Firestore, collection, addDoc, query, getDocs, collectionData, } from '@angular/fire/firestore';
+import { add, create, trash } from 'ionicons/icons';
+import { Firestore, collection, addDoc, query, getDocs, collectionData, doc, deleteDoc, } from '@angular/fire/firestore';
 import { Observable, of } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 
@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: 'home.page.html',
   standalone: true,
   styleUrls: ['home.page.scss'],
-  imports: [CommonModule, IonHeader, IonButtons, IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle,
+  imports: [CommonModule, IonHeader, IonButtons, IonButton,IonToolbar, IonTitle, IonContent, IonIcon, IonButton, IonCard, IonCardHeader, IonCardTitle,
     IonCardSubtitle, IonCardContent, IonFab, IonFabButton, IonModal, IonInput, FormsModule, IonLabel, IonItem],
 })
 export class HomePage {
@@ -30,11 +30,17 @@ export class HomePage {
   inputApellidos: string = '';
   inputClase: string = '';
 
-  constructor(private firestore: Firestore, private toastController: ToastController) { }
+  constructor(
+    private firestore: Firestore,
+    private toastController: ToastController,
+    private alertController: AlertController
+  ) { }
 
   ngOnInit() {
     addIcons({
-      'add': add
+      'add': add,
+      'trash': trash,
+      'create': create
     });
     const estudiantesCollection = collection(this.firestore, 'Estudiantes');
     this.estudiantes$ = collectionData(estudiantesCollection, { idField: 'id' }) as Observable<any[]>;
@@ -102,4 +108,31 @@ async abrirModal() {
 
   }
 
+  async eliminarEstudiante(id: string) {
+    const alert = await this.alertController.create({
+      header: 'Confirmar eliminación',
+      message: '¿Estás seguro de que deseas eliminar este estudiante?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: async () => {
+            try {
+              const estudianteDoc = doc(this.firestore, 'Estudiantes', id);
+              await deleteDoc(estudianteDoc);
+              this.showToast('Estudiante eliminado.');
+            } catch (error) {
+              this.showToast('Error al eliminar estudiante.');
+              console.error(error);
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
 }

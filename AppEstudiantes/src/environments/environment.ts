@@ -1,12 +1,13 @@
 export const environment = {
   production: false,
+  // ⚠️ Reemplaza los valores con tu propia API de Firebase
   FIREBASE_CONFIG: {
-    apiKey: "AIzaSyCQw9oFZKcUqOSXYCc87faf6s6zJXgyYjE",
-    authDomain: "app-estudiantes-92df2.firebaseapp.com",
-    projectId: "app-estudiantes-92df2",
-    storageBucket: "app-estudiantes-92df2.appspot.com",
-    messagingSenderId: "141234795571",
-    appId: "1:141234795571:web:d418397f4e42b231035f46",
-    measurementId: "G-1X4JCXYB5K"
+    apiKey: "TU_API_KEY_AQUI",
+    authDomain: "TU_AUTH_DOMAIN_AQUI",
+    projectId: "TU_PROJECT_ID_AQUI",
+    storageBucket: "TU_STORAGE_BUCKET_AQUI",
+    messagingSenderId: "TU_MESSAGING_SENDER_ID_AQUI",
+    appId: "TU_APP_ID_AQUI",
+    measurementId: "TU_MEASUREMENT_ID_AQUI"
   }
 };
